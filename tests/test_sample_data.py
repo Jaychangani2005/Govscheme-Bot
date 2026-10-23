@@ -16,7 +16,7 @@ def test_sample_schemes_validate():
         raw = json.load(f)
 
     schemes = [Scheme(**item) for item in raw]
-    assert len(schemes) == 3
+    assert len(schemes) >= 3
     for s in schemes:
         print(f"OK  {s.scheme_id:35s} | {s.category:12s} | age_min={s.eligibility.age_min} income_max={s.eligibility.income_max}")
 

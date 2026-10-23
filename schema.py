@@ -79,8 +79,10 @@ class EligibilityCriteria(BaseModel):
     def normalize_gender(cls, v):
         if v is None:
             return v
+        if hasattr(v, "value"):
+            return v.value
         value = str(v).lower().strip()
-        if value == "female or sc/st":
+        if value in ("female or sc/st", "gender.any"):
             return "any"
         return value
 

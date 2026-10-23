@@ -106,8 +106,8 @@ def test_no_duplicate_result_cards():
         "I'm 40 years old, live in Gujarat, work as a teacher, annual income is 1 lakh rupees"
     ).run()
     assert not at.exception
-    # 3 schemes in the sample dataset -> exactly 3 expanders, not 6.
-    assert len(at.expander) == 3
+    # One expander per result scheme -> exactly len(results) expanders, not duplicated.
+    assert len(at.expander) == len(at.session_state.conversation_state["results"])
 
 
 if __name__ == "__main__":

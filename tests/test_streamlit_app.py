@@ -64,6 +64,17 @@ def test_sidebar_profile_updates_immediately_not_lagged():
     assert "(nothing yet)" not in profile_json
 
 
+def test_typo_corrections_are_shown_in_chat():
+    at = fresh_app()
+    at.chat_input[0].set_value(
+        "I'm 65 years old, live in gujrat, and work as a tacher"
+    ).run()
+    assert not at.exception
+    messages = [message.markdown[0].value for message in at.chat_message]
+    assert any("gujrat" in message and "gujarat" in message for message in messages)
+    assert any("tacher" in message and "teacher" in message for message in messages)
+
+
 def test_hard_fail_shows_not_eligible_without_asking_more():
     at = fresh_app()
     # Occupation ("teacher") included so PM-KISAN also resolves in one
@@ -95,14 +106,15 @@ def test_no_duplicate_result_cards():
         "I'm 40 years old, live in Gujarat, work as a teacher, annual income is 1 lakh rupees"
     ).run()
     assert not at.exception
-    # 3 schemes in the sample dataset -> exactly 3 expanders, not 6.
-    assert len(at.expander) == 3
+    # One expander per result scheme -> exactly len(results) expanders, not duplicated.
+    assert len(at.expander) == len(at.session_state.conversation_state["results"])
 
 
 if __name__ == "__main__":
     test_app_boots_with_greeting()
     test_multi_turn_conversation_reaches_eligible_verdict()
     test_sidebar_profile_updates_immediately_not_lagged()
+    test_typo_corrections_are_shown_in_chat()
     test_hard_fail_shows_not_eligible_without_asking_more()
     test_start_over_resets_everything()
     test_no_duplicate_result_cards()
